@@ -76,7 +76,7 @@ const NotePage = () => {
 
         
       </div>
-      <textarea onChange={(e)=>{ setNote({...note, 'body':e.target.value})}} defaultValue={note?.body}></textarea>
+      <textarea onChange={(e)=>{ setNote({...note, 'body':e.target.value})}} value={note?.body}></textarea>
     </div>
   )
 }
