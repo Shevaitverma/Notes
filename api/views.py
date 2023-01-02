@@ -55,3 +55,30 @@ def getNote(request, key):
     notes = Note.objects.get(id=key)
     Serializer = NoteSerializer(notes, many=False)
     return Response(Serializer.data)
+
+@api_view(['POST'])
+def createNote(request):
+    data=request.data
+    note=Note.objects.create(
+        body=data['body']
+    )
+    serializer = NoteSerializer(note, many=False)
+    return Response(serializer.data)
+
+@api_view(['PUT'])
+def updateNote(request, key):
+    data = request.data
+    note = Note.objects.get(id=key)
+    Serializer = NoteSerializer(instance=note, data=data)
+
+    if Serializer.is_valid():
+        Serializer.save()
+
+    return Response(Serializer.data)
+
+
+@api_view(['DELETE'])
+def deleteNote(request, key):
+    note = Note.objects.get(id = key)
+    note.delete()
+    return Response("Note deleted successfully")
