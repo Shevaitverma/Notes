@@ -20,3 +20,9 @@ to run
 for linux `python3 manage.py runserver`
 
 for windows `python manage.py runserver`
+
+
+Screenshots:
+
+![image](https://github.com/Shevaitverma/Notes/assets/54855567/83b87624-a0de-44ba-984d-47c887fcf7e9)
+![image](https://github.com/Shevaitverma/Notes/assets/54855567/0453b7ca-77bf-475e-b430-ba2aefde13fe)
