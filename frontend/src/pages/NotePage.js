@@ -1,84 +1,90 @@
-import React, { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom';
-import { ReactComponent as ArrowLeft} from "../assets/leftArrow.svg";
+import React, { useState, useEffect } from 'react'
+import { ReactComponent as ArrowLeft } from '../assets/arrow-left.svg'
+import { Link } from 'react-router-dom'
 
-const NotePage = () => {
-    const history = useNavigate()
-    const noteId = useParams()
-    const [note, setNote] = useState(null);
+const NotePage = ({ match, history }) => {
 
-    useEffect(()=>{
+    let noteId = match.params.id
+    let [note, setNote] = useState(null)
+
+    useEffect(() => {
         getNote()
-    }, [noteId.id])
+    }, [noteId])
 
-    let getNote = async ()=>{
-        if(noteId === 'new') return
 
-        let response = await fetch(`/api/notes/${noteId.id}/`);
-        let data = await response.json();
-        setNote(data);
+    let getNote = async () => {
+        if (noteId === 'new') return
+
+        let response = await fetch(`/api/notes/${noteId}/`)
+        let data = await response.json()
+        setNote(data)
     }
 
-    let createNote = async()=>{
-      fetch(`/api/notes/create/`,{
-        method:"POST",
-        headers: {
-          "Content-Type":"application/json",
-        },
-        body: JSON.stringify(note)
-      })
+    let createNote = async () => {
+        fetch(`/api/notes/`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(note)
+        })
     }
 
-    let updateNote = async()=>{
-      fetch(`/api/notes/${noteId.id}/update/`,{
-        method:"PUT",
-        headers: {
-          "Content-Type":"application/json",
-        },
-        body: JSON.stringify(note)
-      })
+
+    let updateNote = async () => {
+        fetch(`/api/notes/${noteId}/`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(note)
+        })
     }
 
-    let deleteNote = async() =>{
-      fetch(`/api/notes/${noteId.id}/delete/`,{
-        method:"Delete",
-        headers: {
-          "Content-Type":"application/json",
+
+    let deleteNote = async () => {
+        fetch(`/api/notes/${noteId}/`, {
+            method: 'DELETE',
+            'headers': {
+                'Content-Type': 'application/json'
+            }
+        })
+        history.push('/')
+    }
+
+    let handleSubmit = () => {
+        console.log('NOTE:', note)
+        if (noteId !== 'new' && note.body == '') {
+            deleteNote()
+        } else if (noteId !== 'new') {
+            updateNote()
+        } else if (noteId === 'new' && note.body !== null) {
+            createNote()
         }
-      })
-      history('/')
+        history.push('/')
     }
 
-    let handleSubmit = ()=>{
-
-      if(noteId.id !== "new" && !note.body){
-        deleteNote()
-      }else if(noteId.id !== 'new'){
-        updateNote()
-      }else if(noteId.id === 'new' && note !== null){
-        createNote()
-      }
-
-      history('/')
+    let handleChange = (value) => {
+        setNote(note => ({ ...note, 'body': value }))
+        console.log('Handle Change:', note)
     }
-    
+
     return (
-    <div className='note'>
-      <div className='note-header'>
-        <h3>
-            <ArrowLeft onClick={handleSubmit} />
-        </h3>
-        {noteId.id !== 'new' ? (
-            <button onClick={deleteNote}>Delete</button>
-        ) : (
-            <button onClick={handleSubmit}>Done</button>
-        )}
+        <div className="note" >
+            <div className="note-header">
+                <h3>
+                    <ArrowLeft onClick={handleSubmit} />
+                </h3>
+                {noteId !== 'new' ? (
+                    <button onClick={deleteNote}>Delete</button>
+                ) : (
+                    <button onClick={handleSubmit}>Done</button>
+                )}
 
-        
-      </div>
-      <textarea onChange={(e)=>{ setNote({...note, 'body':e.target.value})}} value={note?.body}></textarea>
-    </div>
-  )
+            </div>
+            <textarea onChange={(e) => { handleChange(e.target.value) }} value={note?.body}></textarea>
+        </div>
+    )
 }
 
 export default NotePage
